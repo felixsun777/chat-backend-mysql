@@ -27,3 +27,5 @@ database : 'chat'
 可以在浏览器输入 http://localhost:3000/ 测试运行状态。
 输入 http://localhost:3000/messages 可以通过GET请求获取聊天记录数据。
 本后端程序只提供json接口给前端页面进行数据交互使用，故无显示界面。
+
+3.为使程序可以有权限存储前端上传来的文件，请给upload文件夹写权限(推荐)，或者sudo npm start启动服务。
