@@ -1,8 +1,6 @@
 var express = require('express');
 var multer = require('multer');
 var router = express.Router();
-var MongoClient = require('mongodb').MongoClient;
-var collection;
 
 // multers disk storage settings
 var storage = multer.diskStorage({
@@ -20,12 +18,6 @@ var upload = multer({
     storage: storage
 }).single('file');
 
-
-// Connect to the db
-MongoClient.connect("mongodb://localhost:27017/local", function(err, db) {
-    if(err) { return console.dir(err); }
-    collection = db.collection('messages');
-});
 
 /* response to options method. */
 //allow cross origin requests

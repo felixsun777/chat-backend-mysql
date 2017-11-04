@@ -10,29 +10,18 @@ var connection = mysql.createConnection({
     database : 'chat'
 });
 
-/* GET an user. */
+/* GET friends of the user. */
 router.get('/', function(req, res, next) {
     res.setHeader("Access-Control-Allow-Origin", "*");
 
     username = req.query.username;
-    password = req.query.password;
 
-    //get users from db and judge the password
-    sql = 'select password from users where username="' + username + '"';
+    sql = 'select user_finish from friends where user_initiate="' + username + '"';
     connection.query(sql, function (err, rows, fields) {
         if (err) {
             throw err;
         }
-        if (rows == ""){
-            res.jsonp({'result':'no such user'});
-        }else{
-            realpassword = rows[0].password;
-            if(password == realpassword){
-                res.jsonp({'result':'ok'});
-            }else{
-                res.jsonp({'result':'incorrect password'});
-            }
-        }
+        res.jsonp(rows);
     })
 });
 

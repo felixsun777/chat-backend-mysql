@@ -1,7 +1,5 @@
 var express = require('express');
 var router = express.Router();
-// var MongoClient = require('mongodb').MongoClient;
-// var collection;
 var mysql = require('mysql');
 
 // Connect to the mysql db
@@ -12,23 +10,18 @@ var connection = mysql.createConnection({
     database : 'chat'
 });
 
-// Connect to the mongodb
-// MongoClient.connect("mongodb://localhost:27017/local", function(err, db) {
-//     if(err) { return console.dir(err); }
-//     collection = db.collection('messages');
-// });
-
 /* response to get method. */
 router.get('/', function(req, res, next) {
+
+    var user_initiate = req.query.user_initiate;
+    var user_finish = req.query.user_finish;
+
     res.setHeader("Access-Control-Allow-Origin", "*");
-    // collection.insert(message2);
-    // collection.find({}).toArray(function(err, docs) {
-    //     if(err) { return console.dir(err); }
-    //     res.jsonp(docs);
-    // });
 
     //get messages from mysql
-    connection.query('SELECT * from message', function (err, rows, fields) {
+    sql = 'select user_initiate,user_finish,message from message where (user_initiate = "'+ user_initiate +'" and user_finish = "'+ user_finish +'") ' +
+    'or (user_initiate = "'+ user_finish +'" and user_finish = "'+ user_initiate +'") order by mno;'
+    connection.query(sql, function (err, rows, fields) {
         if (err) {
             throw err;
         }
@@ -39,7 +32,7 @@ router.get('/', function(req, res, next) {
 /* response to options method. */
 //allow cross origin requests
 router.options('/', function(req, res, next) {
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+    res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Methods", "OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Origin,Content-Type");
@@ -49,18 +42,13 @@ router.options('/', function(req, res, next) {
 /* response to post method. */
 router.post('/', function(req, res, next) {
 
-    //var body = req.body.substring(0,req.body.length()-5);
-    //var body = Json.stringify(req.body);
     console.log(req.body);
     var message = req.body.message;
-    var username = req.body.username;
-
-    console.log(username);
-    console.log(message);
-    //collection.insert(message);
+    var user_initiate = req.body.user_initiate;
+    var user_finish = req.body.user_finish;
 
     //insert new message to mysql
-    var sql = 'Insert into message (username,message) values ( "'+ username +'" , "'+ message +'")';
+    var sql = 'Insert into message (user_initiate,user_finish,message) values ( "'+ user_initiate +'" , "'+ user_finish +'" , "'+ message +'")';
     connection.query(sql, function (err, rows, fields) {
         if (err) {
             res.setHeader("Access-Control-Allow-Origin", "*");
